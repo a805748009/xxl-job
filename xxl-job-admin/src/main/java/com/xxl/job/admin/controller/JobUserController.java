@@ -5,10 +5,10 @@ import com.xxl.job.admin.core.model.XxlJobUser;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.core.biz.model.ReturnT;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -40,7 +40,7 @@ public class JobUserController {
 	public ReturnT<String> save(XxlJobUser xxlJobUser){
 
 		// valid
-		if (xxlJobUser.getUserName()==null || StringUtils.isBlank(xxlJobUser.getUserName())) {
+		if (StringUtils.isEmpty(xxlJobUser.getUserName())) {
 			return new ReturnT<String>(500, (I18nUtil.getString("system_please_input")+"userName") );
 		}
 		if (xxlJobUser.getUserName().length()<5 || xxlJobUser.getUserName().length()>16) {
@@ -62,13 +62,13 @@ public class JobUserController {
 	@PermessionLimit(write=true)
 	public ReturnT<String> update(XxlJobUser xxlJobUser){
 		// valid
-		if (xxlJobUser.getUserName()==null || StringUtils.isBlank(xxlJobUser.getUserName())) {
+		if (StringUtils.isEmpty(xxlJobUser.getUserName())) {
 			return new ReturnT<String>(500, (I18nUtil.getString("system_please_input")+"userName") );
 		}
 		if (xxlJobUser.getUserName().length()<5 || xxlJobUser.getUserName().length()>16) {
 			return new ReturnT<String>(500, I18nUtil.getString("user_name_error") );
 		}
-		if (xxlJobUser.getPassword()!=null && StringUtils.isNotBlank(xxlJobUser.getPassword())) {
+		if (!StringUtils.isEmpty(xxlJobUser.getPassword())) {
 			if (xxlJobUser.getPassword().length()<5 || xxlJobUser.getPassword().length()>32) {
 				return new ReturnT<String>(500, I18nUtil.getString("user_password_error") );
 			}
