@@ -46,4 +46,6 @@ public interface ExecutorBiz {
      */
     public ReturnT<String> run(TriggerParam triggerParam);
 
+    ReturnT<String> safeDestory();
+
 }

@@ -3,6 +3,7 @@ package com.xxl.job.core.executor;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.impl.ExecutorBizImpl;
+import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.thread.ExecutorRegistryThread;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xuxueli on 2016/3/2 21:14.
@@ -36,6 +38,7 @@ public class XxlJobExecutor  {
     private String appName;
     private String ip;
     private int port;
+    private int secondPort;
     private String accessToken;
     private String logPath;
     private int logRetentionDays;
@@ -52,6 +55,9 @@ public class XxlJobExecutor  {
     public void setPort(int port) {
         this.port = port;
     }
+    public void setSecondPort(int secondPort) {
+        this.secondPort = secondPort;
+    }
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
@@ -65,6 +71,15 @@ public class XxlJobExecutor  {
 
     // ---------------------- start + stop ----------------------
     public void start() throws Exception {
+        if(NetUtil.isPortUsed(port)&&NetUtil.isPortUsed(secondPort)){
+            throw new RuntimeException("替换模式需要指定两个端口且两个端口都未被XXLJOB之外的业务占用，正常情况下，双端口中至少有一个端口是未被使用的");
+        }
+
+        if(port<=0||secondPort<=0){
+            throw new RuntimeException("此模式暂不支持端口设置为0自动匹配");
+        }
+
+        int runPort = NetUtil.isPortUsed(port)?secondPort:port;
 
         // init logpath
         XxlJobFileAppender.initLogPath(logPath);
@@ -80,9 +95,29 @@ public class XxlJobExecutor  {
         TriggerCallbackThread.getInstance().start();
 
         // init executor-server
-        port = port>0?port: NetUtil.findAvailablePort(9999);
+//        port = port>0?port: NetUtil.findAvailablePort(9999);
         ip = (ip!=null&&ip.trim().length()>0)?ip: IpUtil.getIp();
-        initRpcProvider(ip, port, appName, accessToken);
+        initRpcProvider(ip, runPort, appName, accessToken);
+
+        // 优雅关闭旧的执行器监听，保证正在运行的业务继续执行直到结束，但是不接收新的业务
+        int shutOldPort = runPort == port?secondPort:port;
+        if(NetUtil.isPortUsed(shutOldPort)){
+            ExecutorBiz executorBiz = (ExecutorBiz) new XxlRpcReferenceBean(
+                    NetEnum.NETTY_HTTP,
+                    Serializer.SerializeEnum.HESSIAN.getSerializer(),
+                    CallType.SYNC,
+                    LoadBalance.ROUND,
+                    ExecutorBiz.class,
+                    null,
+                    10000,
+                    "127.0.0.1:"+shutOldPort,
+                    null,
+                    null,
+                    null).getObject();
+
+            ReturnT<String> runResult = executorBiz.safeDestory();
+            logger.info(">>>>>>>>>> 开始销毁老版本，新版本开始监听。 ");
+        }
     }
     public void destroy(){
         // destory jobThreadRepository
@@ -106,6 +141,41 @@ public class XxlJobExecutor  {
 
         // destory invoker
         stopInvokerFactory();
+    }
+
+    public void safeDestroy(){
+
+        // destory JobLogFileCleanThread
+        JobLogFileCleanThread.getInstance().toStop();
+
+        // destory TriggerCallbackThread
+        TriggerCallbackThread.getInstance().toStop();
+
+        // destory executor-server
+        stopRpcProvider();
+
+        // destory invoker
+        stopInvokerFactory();
+
+        ExecutorRegistryThread.getInstance().toStop();
+
+        int i = 0;
+        while(true){
+            if (jobThreadRepository.size() <= 0) {
+                break;
+            }
+            logger.info("检测第{}次，还有线程在执行中",i);
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            i++;
+        }
+
+        jobHandlerRepository.clear();
+
+
     }
 
 
