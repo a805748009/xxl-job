@@ -1,5 +1,6 @@
 package com.xxl.job.admin.controller;
 
+import com.xxl.job.admin.controller.annotation.PermessionLimit;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobRegistry;
@@ -44,6 +45,7 @@ public class JobGroupController {
 
 	@RequestMapping("/save")
 	@ResponseBody
+	@PermessionLimit(write=true)
 	public ReturnT<String> save(XxlJobGroup xxlJobGroup){
 
 		// valid
@@ -74,6 +76,7 @@ public class JobGroupController {
 
 	@RequestMapping("/update")
 	@ResponseBody
+	@PermessionLimit(write=true)
 	public ReturnT<String> update(XxlJobGroup xxlJobGroup){
 		// valid
 		if (xxlJobGroup.getAppName()==null || xxlJobGroup.getAppName().trim().length()==0) {
@@ -139,6 +142,7 @@ public class JobGroupController {
 
 	@RequestMapping("/remove")
 	@ResponseBody
+	@PermessionLimit(write=true)
 	public ReturnT<String> remove(int id){
 
 		// valid

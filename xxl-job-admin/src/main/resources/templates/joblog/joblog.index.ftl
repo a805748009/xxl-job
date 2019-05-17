@@ -70,10 +70,11 @@
                 <div class="col-xs-1">
                     <button class="btn btn-block btn-info" id="searchBtn">${I18n.system_search}</button>
                 </div>
-
+                <#if authority== 1 >
 	            <div class="col-xs-1">
                     <button class="btn btn-block btn-nomal" id="clearLog">${I18n.joblog_clean}</button>
 	            </div>
+                </#if>
           	</div>
 			
 			<div class="row">

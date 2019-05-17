@@ -1,5 +1,6 @@
 package com.xxl.job.admin.controller;
 
+import com.xxl.job.admin.controller.annotation.PermessionLimit;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
@@ -60,37 +61,42 @@ public class JobInfoController {
 	
 	@RequestMapping("/add")
 	@ResponseBody
+	@PermessionLimit(write=true)
 	public ReturnT<String> add(XxlJobInfo jobInfo) {
 		return xxlJobService.add(jobInfo);
 	}
 	
 	@RequestMapping("/update")
 	@ResponseBody
+	@PermessionLimit(write=true)
 	public ReturnT<String> update(XxlJobInfo jobInfo) {
 		return xxlJobService.update(jobInfo);
 	}
 	
 	@RequestMapping("/remove")
 	@ResponseBody
+	@PermessionLimit(write=true)
 	public ReturnT<String> remove(int id) {
 		return xxlJobService.remove(id);
 	}
 	
 	@RequestMapping("/stop")
 	@ResponseBody
+	@PermessionLimit(write=true)
 	public ReturnT<String> pause(int id) {
 		return xxlJobService.stop(id);
 	}
 	
 	@RequestMapping("/start")
 	@ResponseBody
+	@PermessionLimit(write=true)
 	public ReturnT<String> start(int id) {
 		return xxlJobService.start(id);
 	}
 	
 	@RequestMapping("/trigger")
 	@ResponseBody
-	//@PermessionLimit(limit = false)
+	@PermessionLimit(write=true)
 	public ReturnT<String> triggerJob(int id, String executorParam) {
 		// force cover job param
 		if (executorParam == null) {

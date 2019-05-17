@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.job.admin.dao.XxlJobUserDao">
+	
+	<resultMap id="XxlJobUser" type="com.xxl.job.admin.core.model.XxlJobUser" >
+		<result column="user_name" property="userName" />
+	    <result column="password" property="password" />
+	    <result column="authority" property="authority" />
+	    <result column="last_login_time" property="lastLoginTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.user_name,
+		t.password,
+		t.authority,
+		t.last_login_time
+	</sql>
+
+	<select id="findAll" resultMap="XxlJobUser">
+		SELECT t.user_name,
+		t.authority,
+		t.last_login_time
+		FROM XXL_JOB_QRTZ_TRIGGER_USER AS t
+		ORDER BY t.last_login_time desc
+	</select>
+
+	<select id="findByUserName" parameterType="java.lang.String" resultMap="XxlJobUser">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_JOB_QRTZ_TRIGGER_USER AS t
+		WHERE t.user_name = #{userName}
+	</select>
+
+	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobUser" >
+		INSERT INTO XXL_JOB_QRTZ_TRIGGER_USER ( `user_name`, `password`, `authority`, `last_login_time`)
+		values ( #{userName}, #{password}, #{authority}, #{lastLoginTime});
+	</insert>
+
+	<update id="update" parameterType="com.xxl.job.admin.core.model.XxlJobUser" >
+		UPDATE XXL_JOB_QRTZ_TRIGGER_USER
+		SET
+		<if test="password != null" >
+			`password` = #{password},
+		</if>
+		<if test="lastLoginTime != null" >
+			`last_login_time` = #{lastLoginTime},
+		</if>
+			`authority` = #{authority}
+		WHERE user_name = #{userName}
+	</update>
+
+	<delete id="remove" parameterType="java.lang.String" >
+		DELETE FROM XXL_JOB_QRTZ_TRIGGER_USER
+		WHERE user_name = #{userName}
+	</delete>
+
+
+
+</mapper>

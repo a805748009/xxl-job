@@ -1,7 +1,7 @@
 package com.xxl.job.admin.controller;
 
 import com.xxl.job.admin.controller.annotation.PermessionLimit;
-import com.xxl.job.admin.controller.interceptor.PermissionInterceptor;
+import com.xxl.job.admin.controller.interceptor.MorePermissionInterceptor;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.service.XxlJobService;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -36,7 +36,6 @@ public class IndexController {
 
 		Map<String, Object> dashboardMap = xxlJobService.dashboardInfo();
 		model.addAllAttributes(dashboardMap);
-
 		return "index";
 	}
 
@@ -50,7 +49,7 @@ public class IndexController {
 	@RequestMapping("/toLogin")
 	@PermessionLimit(limit=false)
 	public String toLogin(Model model, HttpServletRequest request) {
-		if (PermissionInterceptor.ifLogin(request)) {
+		if (MorePermissionInterceptor.ifAuthority(request)>-1) {
 			return "redirect:/";
 		}
 		return "login";
@@ -61,7 +60,7 @@ public class IndexController {
 	@PermessionLimit(limit=false)
 	public ReturnT<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
 		// valid
-		if (PermissionInterceptor.ifLogin(request)) {
+		if (MorePermissionInterceptor.ifAuthority(request)>-1) {
 			return ReturnT.SUCCESS;
 		}
 
@@ -72,7 +71,7 @@ public class IndexController {
 		boolean ifRem = (ifRemember!=null && ifRemember.trim().length()>0 && "on".equals(ifRemember))?true:false;
 
 		// do login
-		boolean loginRet = PermissionInterceptor.login(response, userName, password, ifRem);
+		boolean loginRet = MorePermissionInterceptor.login(response, userName, password, ifRem);
 		if (!loginRet) {
 			return new ReturnT<String>(500, I18nUtil.getString("login_param_unvalid"));
 		}
@@ -83,8 +82,8 @@ public class IndexController {
 	@ResponseBody
 	@PermessionLimit(limit=false)
 	public ReturnT<String> logout(HttpServletRequest request, HttpServletResponse response){
-		if (PermissionInterceptor.ifLogin(request)) {
-			PermissionInterceptor.logout(request, response);
+		if (MorePermissionInterceptor.ifAuthority(request)>-1) {
+			MorePermissionInterceptor.logout(request, response);
 		}
 		return ReturnT.SUCCESS;
 	}

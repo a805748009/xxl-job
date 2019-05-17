@@ -230,3 +230,19 @@ INSERT INTO `XXL_JOB_QRTZ_TRIGGER_INFO`(`id`, `job_group`, `job_cron`, `job_desc
 
 commit;
 
+CREATE TABLE `XXL_JOB_QRTZ_TRIGGER_USER` (
+`user_name`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '账号' ,
+`password`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码' ,
+`authority`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '权限 0只读 1全部' ,
+`last_login_time`  varchar(19) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '最后登录时间' ,
+PRIMARY KEY (`user_name`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=COMPACT
+;
+
+INSERT INTO `XXL_JOB_QRTZ_TRIGGER_USER` (`user_name`, `password`, `authority`, `last_login_time`) VALUES ('admin', 'e10adc3949ba59abbe56e057f20f883e', '1', '2019-03-11 10:14:00');
+
+
+

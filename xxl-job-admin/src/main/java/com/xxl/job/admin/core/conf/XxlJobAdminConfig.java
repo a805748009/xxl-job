@@ -46,6 +46,9 @@ public class XxlJobAdminConfig implements InitializingBean{
     @Value("${spring.mail.username}")
     private String emailUserName;
 
+    @Value("${xxl.job.aes.key}")
+    private  String aesKey ;
+
     // dao, service
 
     @Resource
@@ -105,4 +108,7 @@ public class XxlJobAdminConfig implements InitializingBean{
         return mailSender;
     }
 
+    public String getAesKey() {
+        return aesKey;
+    }
 }

@@ -108,16 +108,20 @@ $(function() {
 	                	"render": function ( data, type, row ) {
 	                		return function(){
 	                			// status
+								var authority = $("#authority").val();
 	                			var start_stop = "";
-                                if (row.jobStatus && row.jobStatus != 'NONE') {
-                                    if ('NORMAL' == row.jobStatus) {
-                                        start_stop = '<button class="btn btn-primary btn-xs job_operate" _type="job_pause" type="button">'+ I18n.jobinfo_opt_stop +'</button>  ';
+	                			if(authority==1){
+                                    if (row.jobStatus && row.jobStatus != 'NONE') {
+                                        if ('NORMAL' == row.jobStatus) {
+                                            start_stop = '<button class="btn btn-primary btn-xs job_operate" _type="job_pause" type="button">'+ I18n.jobinfo_opt_stop +'</button>  ';
+                                        } else {
+                                            start_stop = '<button class="btn btn-primary btn-xs job_operate" _type="job_pause" type="button">'+ I18n.jobinfo_opt_stop +'</button>  ';
+                                        }
                                     } else {
-                                        start_stop = '<button class="btn btn-primary btn-xs job_operate" _type="job_pause" type="button">'+ I18n.jobinfo_opt_stop +'</button>  ';
+                                        start_stop = '<button class="btn btn-primary btn-xs job_operate" _type="job_resume" type="button">'+ I18n.jobinfo_opt_start +'</button>  ';
                                     }
-                                } else {
-                                    start_stop = '<button class="btn btn-primary btn-xs job_operate" _type="job_resume" type="button">'+ I18n.jobinfo_opt_start +'</button>  ';
-                                }
+								}
+
 
 	                			// log url
 	                			var logUrl = base_url +'/joblog?jobId='+ row.id;
@@ -131,13 +135,19 @@ $(function() {
 
 								// html
                                 tableData['key'+row.id] = row;
-								var html = '<p id="'+ row.id +'" >'+
-									'<button class="btn btn-primary btn-xs job_trigger" type="button">'+ I18n.jobinfo_opt_run +'</button>  '+
+                                var html_button = "";
+                                if(authority==1){
+                                    html_button = '<button class="btn btn-primary btn-xs job_trigger" type="button">'+ I18n.jobinfo_opt_run +'</button>  '+
                                     start_stop +
-									'<a href="'+ logUrl +'"> <button class="btn btn-primary btn-xs" type="job_del" type="button" >'+ I18n.jobinfo_opt_log +'</button> </a> <br>  '+
-									'<button class="btn btn-warning btn-xs update" type="button">'+ I18n.system_opt_edit +'</button>  '+
-									codeBtn +
-									'<button class="btn btn-danger btn-xs job_operate" _type="job_del" type="button">'+ I18n.system_opt_del +'</button>  '+
+                                    '<a href="'+ logUrl +'"> <button class="btn btn-primary btn-xs" type="job_del" type="button" >'+ I18n.jobinfo_opt_log +'</button> </a> <br>  '+
+                                    '<button class="btn btn-warning btn-xs update" type="button">'+ I18n.system_opt_edit +'</button>  '+
+                                    codeBtn +
+                                    '<button class="btn btn-danger btn-xs job_operate" _type="job_del" type="button">'+ I18n.system_opt_del +'</button>  '
+                                }else{
+                                    html_button = '<a href="'+ logUrl +'"> <button class="btn btn-primary btn-xs" type="job_del" type="button" >'+ I18n.jobinfo_opt_log +'</button> </a> <br>  ';
+								}
+								var html = '<p id="'+ row.id +'" >'+
+                                    html_button +
 									'</p>';
 
 	                			return html;

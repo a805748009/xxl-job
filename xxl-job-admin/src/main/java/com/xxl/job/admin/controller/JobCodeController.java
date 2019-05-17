@@ -1,5 +1,6 @@
 package com.xxl.job.admin.controller;
 
+import com.xxl.job.admin.controller.annotation.PermessionLimit;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLogGlue;
 import com.xxl.job.admin.core.util.I18nUtil;
@@ -51,6 +52,7 @@ public class JobCodeController {
 	
 	@RequestMapping("/save")
 	@ResponseBody
+	@PermessionLimit(write=true)
 	public ReturnT<String> save(Model model, int id, String glueSource, String glueRemark) {
 		// valid
 		if (glueRemark==null) {

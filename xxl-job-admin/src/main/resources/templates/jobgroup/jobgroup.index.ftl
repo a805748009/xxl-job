@@ -29,7 +29,9 @@
 					<div class="box">
 			            <div class="box-header">
 							<h3 class="box-title">${I18n.jobgroup_list}</h3>&nbsp;&nbsp;
+                            <#if authority== 1 >
                             <button class="btn btn-info btn-xs pull-left2 add" >${I18n.jobgroup_add}</button>
+                            </#if>
 						</div>
 			            <div class="box-body">
 			              	<table id="joblog_list" class="table table-bordered table-striped display" width="100%" >
@@ -68,6 +70,7 @@
                                             </#if>
                                         </td>
 										<td>
+                                             <#if authority== 1 >
                                             <button class="btn btn-warning btn-xs update"
                                                     id="${group.id}"
                                                     appName="${group.appName}"
@@ -76,6 +79,7 @@
                                                     addressType="${group.addressType}"
                                                     addressList="${group.addressList!}" >${I18n.system_opt_edit}</button>
                                             <button class="btn btn-danger btn-xs remove" id="${group.id}" >${I18n.system_opt_del}</button>
+                                             </#if>
 										</td>
 									</tr>
 								</#list>

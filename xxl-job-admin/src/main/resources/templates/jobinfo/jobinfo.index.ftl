@@ -50,9 +50,11 @@
 	            <div class="col-xs-1">
 	            	<button class="btn btn-block btn-info" id="searchBtn">${I18n.system_search}</button>
 	            </div>
+                <#if authority== 1 >
 	            <div class="col-xs-2">
 	            	<button class="btn btn-block btn-success add" type="button">${I18n.jobinfo_field_add}</button>
 	            </div>
+                </#if>
           	</div>
 	    	
 			<div class="row">
@@ -62,6 +64,7 @@
 			            	<h3 class="box-title">调度列表</h3>
 			            </div>-->
 			            <div class="box-body" >
+                            <input type="hidden" id="authority" value="${authority}" >
 			              	<table id="job_list" class="table table-bordered table-striped" width="100%" >
 				                <thead>
 					            	<tr>
@@ -176,6 +179,7 @@
 							<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
 						</div>
 					</div>
+
 
 <input type="hidden" name="glueRemark" value="GLUE代码初始化" >
 <textarea name="glueSource" style="display:none;" ></textarea>

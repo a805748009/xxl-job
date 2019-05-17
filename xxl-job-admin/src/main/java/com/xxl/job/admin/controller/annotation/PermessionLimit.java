@@ -19,4 +19,10 @@ public @interface PermessionLimit {
 	 */
 	boolean limit() default true;
 
+	/**
+	 * 是否是写权限 （默认不拦截）
+	 * @return
+	 */
+	boolean write() default false;
+
 }
