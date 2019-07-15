@@ -20,7 +20,7 @@ XXL-JOB是一个轻量级分布式任务调度平台，其核心设计目标是�
 ### 1.3 特性
 - 1、简单：支持通过Web页面对任务进行CRUD操作，操作简单，一分钟上手；
 - 2、动态：支持动态修改任务状态、启动/停止任务，以及终止运行中任务，即时生效；
-- 3、调度中心HA（中心式）：调度采用中心式设计，“调度中心”基于集群Quartz实现并支持集群部署，可保证调度中心HA；
+- 3、调度中心HA（中心式）：调度采用中心式设计，“调度中心”自研调度组件并支持集群部署，可保证调度中心HA；
 - 4、执行器HA（分布式）：任务分布式执行，任务"执行器"支持集群部署，可保证任务执行HA；
 - 5、注册中心: 执行器会周期性自动注册任务, 调度中心将会自动发现注册的任务并触发执行。同时，也支持手动录入执行器地址；
 - 6、弹性扩容缩容：一旦有新执行器机器上线或者下线，下次调度时将会重新分配任务；
@@ -50,7 +50,7 @@ XXL-JOB是一个轻量级分布式任务调度平台，其核心设计目标是�
 - 30、跨平台：原生提供通用HTTP任务Handler（Bean任务，"HttpJobHandler"）；业务方只需要提供HTTP链接即可，不限制语言、平台；
 - 31、国际化：调度中心支持国际化设置，提供中文、英文两种可选语言，默认为中文；
 - 32、容器化：提供官方docker镜像，并实时更新推送dockerhub，进一步实现产品开箱即用；
-- 33、线程池隔离：调度线程池进行隔离拆分，慢任务自动降级进入"Slow"线程池，避免耗尽调度线程，提高系统稳定性；；
+- 33、线程池隔离：调度线程池进行隔离拆分，慢任务自动降级进入"Slow"线程池，避免耗尽调度线程，提高系统稳定性；
 - 34、用户管理：支持在线管理系统用户，存在管理员、普通用户两种角色；
 - 35、权限控制：执行器维度进行权限控制，管理员拥有全量权限，普通用户需要分配执行器权限后才允许相关操作；
 
@@ -265,6 +265,41 @@ XXL-JOB是一个轻量级分布式任务调度平台，其核心设计目标是�
     - 178、厦门神州鹰软件科技有限公司
     - 179、深圳市招商信诺人寿保险有限公司
     - 180、上海好屋网信息技术有限公司
+    - 181、海信集团
+    - 182、信凌可信息科技（上海）有限公司
+    - 183、长春天成科技发展有限公司
+    - 184、用友金融信息技术股份有限公司（用友）
+    - 185、北京咖啡易融有限公司
+    - 186、国投瑞银基金管理有限公司
+    - 187、晋松(上海)网络信息技术有限公司
+    - 188、深圳市随手科技有限公司（随手记）
+    - 189、深圳水务科技有限公司
+    - 190、易企秀
+    - 191、北京磁云科技
+    - 192、南京蜂泰互联网科技有限公司
+    - 193、章鱼直播
+    - 194、奖多多科技
+    - 195、天津市神州商龙科技股份有限公司
+    - 196、岩心科技
+    - 197、车码科技（北京）有限公司
+    - 198、贵阳市投资控股集团
+    - 199、康旗股份
+    - 200、龙腾出行
+    - 201、杭州华量软件
+    - 202、合肥顶岭医疗科技有限公司
+    - 203、重庆表达式科技有限公司
+    - 204、上海米道信息科技有限公司
+    - 205、北京益友会科技有限公司
+    - 206、北京融贯电子商务有限公司
+    - 207、中国外汇交易中心
+    - 208、中国外运股份有限公司
+    - 209、中国上海晓圈教育科技有限公司
+    - 210、普联软件股份有限公司
+    - 211、北京科蓝软件股份有限公司
+    - 212、江苏斯诺物联科技有限公司
+    - 213、北京搜狐-狐友（搜狐）
+    - 214、新大陆网商金融
+    - 215、山东神码中税信息科技有限公司
 	- ……
 
 > 更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-job/issues/1 ) 登记，登记仅仅为了产品推广。
@@ -345,7 +380,7 @@ XXL-JOB是一个轻量级分布式任务调度平台，其核心设计目标是�
 调度中心配置内容说明：
 
     ### 调度中心JDBC链接：链接地址请保持和 2.1章节 所创建的调度数据库的地址一致
-    spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-job?Unicode=true&characterEncoding=UTF-8
+    spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_job?Unicode=true&characterEncoding=UTF-8
     spring.datasource.username=root
     spring.datasource.password=root_pwd
     spring.datasource.driver-class-name=com.mysql.jdbc.Driver
@@ -358,20 +393,22 @@ XXL-JOB是一个轻量级分布式任务调度平台，其核心设计目标是�
     spring.mail.properties.mail.smtp.auth=true
     spring.mail.properties.mail.smtp.starttls.enable=true
     spring.mail.properties.mail.smtp.starttls.required=true
+    spring.mail.properties.mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory
     
-    ### 登录账号
-    xxl.job.login.username=admin
-    xxl.job.login.password=123456
-    
-    ### 调度中心通讯TOKEN，非空时启用
+    ### xxl-job, access token
     xxl.job.accessToken=
     
-    ### 调度中心国际化设置，默认为中文版本，值设置为“en”时切换为英文版本
+    ### xxl-job, i18n (default empty as chinese, "en" as english)
     xxl.job.i18n=
+    
+    
 
 #### 步骤二：部署项目：
 如果已经正确进行上述配置，可将项目编译打包部署。
-调度中心访问地址：http://localhost:8080/xxl-job-admin (该地址执行器将会使用到，作为回调地址)，登录后运行界面如下图所示
+
+调度中心访问地址：http://localhost:8080/xxl-job-admin (该地址执行器将会使用到，作为回调地址)
+
+默认登录账号 "admin/123456", 登录后运行界面如下图所示。
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/img_6yC0.png "在这里输入图片标题")
 
@@ -405,7 +442,7 @@ docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-job-admin  -d xuxueli/x
 * 如需自定义 mysql 等配置，可通过 "PARAMS" 指定，参数格式 RAMS="--key=value  --key2=value2" ；
 * 配置项参考文件：/xxl-job/xxl-job-admin/src/main/resources/application.properties
 */
-docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-job?Unicode=true&characterEncoding=UTF-8" -p 8080:8080 -v /tmp:/data/applogs --name xxl-job-admin  -d xuxueli/xxl-job-admin
+docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_job?Unicode=true&characterEncoding=UTF-8" -p 8080:8080 -v /tmp:/data/applogs --name xxl-job-admin  -d xuxueli/xxl-job-admin
 ```
 
 
@@ -776,18 +813,16 @@ try{
     - /xxl-job-executor-samples :执行器，Sample示例项目（大家可以在该项目上进行开发，也可以将现有项目改造生成执行器项目）
 
 ### 5.2 “调度数据库”配置
-XXL-JOB调度模块基于Quartz集群实现，其“调度数据库”是在Quartz的11张集群mysql表基础上扩展而成。
+XXL-JOB调度模块基于自研调度组件并支持集群部署，调度数据库表说明如下：
 
-XXL-JOB首先定制了Quartz原生表结构前缀（XXL_JOB_QRTZ_）。
+    - xxl_job_lock：任务调度锁表；
+    - xxl_job_group：执行器信息表，维护任务执行器信息；
+    - xxl_job_info：调度扩展信息表： 用于保存XXL-JOB调度任务的扩展信息，如任务分组、任务名、机器地址、执行器、执行入参和报警邮件等等；
+    - xxl_job_log：调度日志表： 用于保存XXL-JOB任务调度的历史信息，如调度结果、执行结果、调度入参、调度机器和执行器等等；
+    - xxl_job_logglue：任务GLUE日志：用于保存GLUE更新历史，用于支持GLUE的版本回溯功能；
+    - xxl_job_registry：执行器注册表，维护在线的执行器和调度中心机器地址信息；
+    - xxl_job_user：系统用户表；
 
-然后，在此基础上新增了几张张扩展表，如下：
-    - XXL_JOB_QRTZ_TRIGGER_GROUP：执行器信息表，维护任务执行器信息；
-    - XXL_JOB_QRTZ_TRIGGER_REGISTRY：执行器注册表，维护在线的执行器和调度中心机器地址信息；
-    - XXL_JOB_QRTZ_TRIGGER_INFO：调度扩展信息表： 用于保存XXL-JOB调度任务的扩展信息，如任务分组、任务名、机器地址、执行器、执行入参和报警邮件等等；
-    - XXL_JOB_QRTZ_TRIGGER_LOG：调度日志表： 用于保存XXL-JOB任务调度的历史信息，如调度结果、执行结果、调度入参、调度机器和执行器等等；
-    - XXL_JOB_QRTZ_TRIGGER_LOGGLUE：任务GLUE日志：用于保存GLUE更新历史，用于支持GLUE的版本回溯功能；
-
-因此，XXL-JOB调度数据库共计用于16张数据库表。
 
 ### 5.3 架构设计
 #### 5.3.1 设计思想
@@ -820,58 +855,30 @@ Quartz作为开源作业调度中的佼佼者，是作业调度的首选。但�
 
 XXL-JOB弥补了quartz的上述不足之处。
 
-#### 5.4.2 RemoteHttpJobBean
-常规Quartz的开发，任务逻辑一般维护在QuartzJobBean中，耦合很严重。XXL-JOB中“调度模块”和“任务模块”完全解耦，调度模块中的所有调度任务使用同一个QuartzJobBean，即RemoteHttpJobBean。不同的调度任务将各自参数维护在各自扩展表数据中，当触发RemoteHttpJobBean执行时，将会解析不同的任务参数发起远程调用，调用各自的远程执行器服务。
+#### 5.4.2 自研调度模块
+XXL-JOB最终选择自研调度组件（早期调度组件基于Quartz）；一方面是为了精简系统降低冗余依赖，另一方面是为了提供系统的可控度与稳定性；
 
-这种调用模型类似RPC调用，RemoteHttpJobBean提供调用代理的功能，而执行器提供远程服务的功能。
+XXL-JOB中“调度模块”和“任务模块”完全解耦，调度模块进行任务调度时，将会解析不同的任务参数发起远程调用，调用各自的远程执行器服务。这种调用模型类似RPC调用，调度中心提供调用代理的功能，而执行器提供远程服务的功能。
 
 #### 5.4.3 调度中心HA（集群）
-基于Quartz的集群方案，数据库选用Mysql；集群分布式并发环境中使用QUARTZ定时任务调度，会在各个节点会上报任务，存到数据库中，执行时会从数据库中取出触发器来执行，如果触发器的名称和执行时间相同，则只有一个节点去执行此任务。
-
-```
-# for cluster
-org.quartz.jobStore.tablePrefix = XXL_JOB_QRTZ_
-org.quartz.scheduler.instanceId: AUTO
-org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
-org.quartz.jobStore.isClustered: true
-org.quartz.jobStore.clusterCheckinInterval: 1000
-```
+基于数据库的集群方案，数据库选用Mysql；集群分布式并发环境中进行定时任务调度时，会在各个节点会上报任务，存到数据库中，执行时会从数据库中取出触发器来执行，如果触发器的名称和执行时间相同，则只有一个节点去执行此任务。
 
 #### 5.4.4 调度线程池
 调度采用线程池方式实现，避免单线程因阻塞而引起任务调度延迟。
 
-```
-org.quartz.threadPool.class: org.quartz.simpl.SimpleThreadPool
-org.quartz.threadPool.threadCount: 50
-org.quartz.threadPool.threadPriority: 5
-org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread: true
-```
 
-#### 5.4.5 @DisallowConcurrentExecution
-XXL-JOB调度模块的“调度中心”默认不使用该注解，即默认开启并行机制，因为RemoteHttpJobBean为公共QuartzJobBean，这样在多线程调度的情况下，调度模块被阻塞的几率很低，大大提高了调度系统的承载量。
+#### 5.4.5 并行调度
+XXL-JOB调度模块默认采用并行机制，在多线程调度的情况下，调度模块被阻塞的几率很低，大大提高了调度系统的承载量。
 
 XXL-JOB的每个调度任务虽然在调度模块是并行调度执行的，但是任务调度传递到任务模块的“执行器”确实串行执行的，同时支持任务终止。
 
-#### 5.4.6 misfire
-错过了触发时间，处理规则。
-可能原因：服务重启；调度线程被QuartzJobBean阻塞，线程被耗尽；某个任务启用了@DisallowConcurrentExecution，上次调度持续阻塞，下次调度被错过；
+#### 5.4.6 过期处理策略
+任务调度错过触发时间时的处理策略：
+- 可能原因：服务重启；调度线程被阻塞，线程被耗尽；上次调度持续阻塞，下次调度被错过；
+- 处理策略：
+    - 过期超5s：本地忽略，当前时间开始计算下次触发时间
+    - 过期超过5s：过期5s内：立即触发一次，当前时间开始计算下次触发时间
 
-quartz.properties中关于misfire的阀值配置如下，单位毫秒：
-```
-org.quartz.jobStore.misfireThreshold: 60000
-```
-
-Misfire规则：
-    withMisfireHandlingInstructionDoNothing：不触发立即执行，等待下次调度；
-    withMisfireHandlingInstructionIgnoreMisfires：以错过的第一个频率时间立刻开始执行；
-    withMisfireHandlingInstructionFireAndProceed：以当前时间为触发频率立刻触发一次执行；
-
-XXL-JOB默认misfire规则为：withMisfireHandlingInstructionDoNothing
-
-```
-CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(jobInfo.getJobCron()).withMisfireHandlingInstructionDoNothing();
-CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
-```
 
 #### 5.4.7 日志回调服务
 调度模块的“调度中心”作为Web服务部署时，一方面承担调度中心功能，另一方面也为执行器提供API服务。
@@ -926,7 +933,7 @@ xxl-job-admin#com.xxl.job.admin.controller.JobApiController.callback
 
 #### 5.4.11  全异步化 & 轻量级
 
-- 全异步化设计：XXL-JOB系统中业务逻辑在远程执行器执行，触发流程全异步化设计。相比直接在quartz的QuartzJobBean中执行业务逻辑，极大的降低了调度线程占用时间；
+- 全异步化设计：XXL-JOB系统中业务逻辑在远程执行器执行，触发流程全异步化设计。相比直接在调度中心内部执行业务逻辑，极大的降低了调度线程占用时间；
     - 异步调度：调度中心每次任务触发时仅发送一次调度请求，该调度请求首先推送“异步调度队列”，然后异步推送给远程执行器
     - 异步执行：执行器会将请求存入“异步执行队列”并且立即响应调度中心，异步运行。
 - 轻量级设计：XXL-JOB调度中心中每个JOB逻辑非常 “轻”，在全异步化的基础上，单个JOB一次运行平均耗时基本在 "10ms" 之内（基本为一次请求的网络开销）；因此，可以保证使用有限的线程支撑大量的JOB并发运行；
@@ -988,7 +995,7 @@ XXL-JOB会为每次调度请求生成一个单独的日志文件，需要通过 
 自v1.5版本之后, 任务取消了"任务执行机器"属性, 改为通过任务注册和自动发现的方式, 动态获取远程执行器地址并执行。
 
     AppName: 每个执行器机器集群的唯一标示, 任务注册以 "执行器" 为最小粒度进行注册; 每个任务通过其绑定的执行器可感知对应的执行器机器列表;
-    注册表: 见"XXL_JOB_QRTZ_TRIGGER_REGISTRY"表, "执行器" 在进行任务注册时将会周期性维护一条注册记录，即机器地址和AppName的绑定关系; "调度中心" 从而可以动态感知每个AppName在线的机器列表;
+    注册表: 见"xxl_job_registry"表, "执行器" 在进行任务注册时将会周期性维护一条注册记录，即机器地址和AppName的绑定关系; "调度中心" 从而可以动态感知每个AppName在线的机器列表;
     执行器注册: 任务注册Beat周期默认30s; 执行器以一倍Beat进行执行器注册, 调度中心以一倍Beat进行动态任务发现; 注册信息的失效时间被三倍Beat; 
     执行器注册摘除：执行器销毁时，将会主动上报调度中心并摘除对应的执行器机器信息，提高心跳注册的实时性；
     
@@ -1477,57 +1484,74 @@ Tips: 历史版本(V1.3.x)目前已经Release至稳定版本, 进入维护阶段
 - 23、JobHandler#msg长度限制，修复异常情况下日志超长导致内存溢出的问题；
 - 24、升级xxl-rpc至较新版本，修复springboot 2.x版本兼容性问题；
 
-
-### 6.25 版本 v2.1.0 Release Notes[规划中]
-- 1、[规划中] 移除quartz：精简底层实现，优化已知问题；
+### 6.25 版本 v2.1.0 Release Notes[2019-07-07]
+- 1、自研调度组件，移除quartz依赖：一方面是为了精简系统降低冗余依赖，另一方面是为了提供系统的可控度与稳定性；
     - 触发：单节点周期性触发，运行事件如delayqueue；
-    - 调度：集群竞争，负载方式协同处理，竞争-加入时间轮-释放-竞争；
-- 2、用户管理：支持在线管理系统用户，存在管理员、普通用户两种角色；
-- 3、权限管理：执行器维度进行权限控制，管理员拥有全量权限，普通用户需要分配执行器权限后才允许相关操作；
-- 4、调度日志优化：支持设置日志保留天数，过期日志天维度记录报表，并清理；调度报表汇总实时数据和报表；
-- 5、调度线程池参数调优；
-- 6、升级xxl-rpc至较新版本，并清理冗余POM；
-- 7、注册表索引优化，缓解锁表问题；
+    - 调度：集群竞争，负载方式协同处理，锁竞争-更新触发信息-推送时间轮-锁释放-锁竞争；
+- 2、底层表结构重构：移除11张quartz相关表，并对现有表结构优化梳理；
+- 3、任务日志主键调整为long数据类型，防止海量日志情况下数据溢出；
+- 4、底层线程模型重构：移除Quartz线程池，降低系统线程与内存开销；
+- 5、用户管理：支持在线管理系统用户，存在管理员、普通用户两种角色；
+- 6、权限管理：执行器维度进行权限控制，管理员拥有全量权限，普通用户需要分配执行器权限后才允许相关操作；
+- 7、调度线程池参数调优；
+- 8、注册表索引优化，缓解锁表问题；
+- 9、新增Jboot执行器Sample示例项目；
+- 10、任务列表优化，支持根据 "任务状态"、"负责人" 属性筛选任务；
+- 11、任务日志列表交互优化，操作按钮合并为分割按钮；
+- 12、项目依赖升级至较新稳定版本，如spring、springboot、groovy、xxl-rpc等等；并清理冗余POM；
+- 13、升级xxl-rpc至较新版本，修复代理服务初始化时远程服务不可用导致长连冗余创建的问题;
+- 14、首页调度报表的日期排序在TIDB下乱序问题修复；
+- 15、调度中心与执行器双向通讯超时时间调整为3s；
+- 16、调度组件销毁流程优化，先停止调度线程，然后等待时间轮内存量任务处理完成，最终销毁时间轮线程；
+- 17、执行器回调线程优化，回调地址为空时销毁问题修复；
+- 18、HttpJobHandler优化，响应数据指定UTF-8格式，避免中文乱码；
+- 19、代码优化，ConcurrentHashMap变量类型改为ConcurrentMap，避免因不同版本实现不同导致的兼容性问题；
+
+
+### 6.26 版本 v2.1.1 Release Notes[规划中]
+- 1、[ING]调度日志优化：支持设置日志保留天数，过期日志天维度记录报表，并清理；调度报表汇总实时数据和报表；
+- 2、[ING]父子任务参数传递；
+- 3、[ING]调度中心JDK版本调整为JDK8，从而升级至最新版本SpringBoot；
+- 4、[ING]执行器端口复用，复用容器端口提供通讯服务；
+- 5、[ING]执行器服务端口与注册端口分离，支持docker动态随机端口；
+- 6、登录界面取消默认填写的登录账号密码；
+- 7、[ING]cron在线生成工具；
+- 8、[ING]任务、执行器数据全量本地缓存；新增消息表广播通知；
+- 9、[ING]任务触发组件优化，常规1s预加载一次，轮空时主动休眠4s；
 
 
 ### TODO LIST
 - 1、任务分片路由：分片采用一致性Hash算法计算出尽量稳定的分片顺序，即使注册机器存在波动也不会引起分批分片顺序大的波动；目前采用IP自然排序，可以满足需求，待定；
 - 2、任务单机多线程：提升任务单机并行处理能力；
 - 3、调度任务优先级；
-- 4、移除quartz依赖，重写调度模块：新增或恢复任务时将下次执行记录插入delayqueue，调度中心集群竞争分布式锁，成功节点批量加载到期delayqueue数据，批量执行。
-- 5、多数据库支持，在重写并移除Quartz的基础上，DAO层通过JPA实现，不限制数据库类型；
-- 6、执行器Log清理功能：调度中心Log删除时同步删除执行器中的Log文件；
-- 7、Bean模式任务，JobHandler自动从执行器中查询展示为下拉框，选择后自动填充任务名称等属性；
-- 8、API事件触发类型任务（更类似MQ消息）支持"动态传参、延时消费"；该类型任务不走Quartz，单独建立MQ消息表，调度中心竞争触发；待定，该功能与 XXL-MQ 冲突，该场景建议用后者；
-- 9、调度线程池改为协程方式实现，大幅降低系统内存消耗；
-- 10、提供多版本执行器：不依赖容器版本、不内嵌Jetty版本（通过配置executoraddress替换server通讯）等；
-- 11、注册中心支持扩展，除默认基于DB之外，支持扩展接入第三方注册中心如zk、eureka等；
-- 12、流程任务，支持参数传递；
-- 13、Cron TimeZone 自定义；
-- 14、忙碌转移优化，全部机器忙碌时不再直接失败；
-- 15、流程任务等，透传动态参数；
-- 16、任务自动注册；待考虑，因为任务自动注册将会导致任务难以管理控制；
-- 17、批量触发支持，添加参数 "org.quartz.scheduler.batchTriggerAcquisitionMaxCount: 50"；
-- 18、失败重试间隔；
-- 19、任务权限管理：执行器为粒度分配权限，核心操作校验权限；
-- 20、SimpleTrigger 支持；
-- 21、cron在线生成工具，如 "cronboot/cron.qqe2"；
-- 22、调度日志列表加上执行时长列，并支持排序；
-- 23、dag任务，替换子任务：配置并列的"a-b、b-c"路径列表，构成串行、并行、dag任务流程，"dagre-d3"绘图；任务依赖，流程图，子任务+会签任务，各节点日志；
-- 24、排程任务：支持时间短、时间点配置，支持配置多个，精确到秒；实现有效期等功能；
-- 25、告警邮件内容，支持自定义模板配置；
-- 26、暂停状态，支持Cron 为空；
-- 27、新增任务运行模式 "GLUE模式(GO) "，支持GO任务；
-- 28、quartz misfire 配置优化，计划改为0；
-- 29、新增状态列，支持筛选；
-- 30、注册中心优化，实时性注册发现：心跳注册间隔10s，refresh失败则首次注册并立即更新注册信息，心跳类似；30s过期销毁；
-- 31、提供执行器Docker镜像；
-- 32、脚本任务，支持数据参数，新版本仅支持单参数不支持需要兼容；
-- 33、GLUE 模式 Web Ide 版本对比功能；
-- 34、批量调度：调度请求入queue，调度线程批量获取调度请求并发起远程调度；提高线程效率；
-- 35、执行器端口复用，http通讯自动添加相对地址 "/xxl-job"：
-- 36、多语言执行器：约定跨语言通讯方案，以及通讯接口；
-- 37、移除commons-exec，采用原生实现；
+- 4、多数据库支持，在重写并移除Quartz的基础上，DAO层通过JPA实现，不限制数据库类型；
+- 5、执行器Log清理功能：调度中心Log删除时同步删除执行器中的Log文件；
+- 6、Bean模式任务，JobHandler自动从执行器中查询展示为下拉框，选择后自动填充任务名称等属性；
+- 7、API事件触发类型任务（更类似MQ消息）支持"动态传参、延时消费"；该类型任务不走调度组件，单独建立MQ消息表，调度中心竞争触发；待定，该功能与 XXL-MQ 冲突，该场景建议用后者；
+- 8、调度线程池改为协程方式实现，大幅降低系统内存消耗；
+- 9、执行器端口复用，http通讯自动添加相对地址 "/xxl-job"：
+- 10、流程任务，支持参数传递；
+- 11、Cron TimeZone 自定义；
+- 12、忙碌转移优化，全部机器忙碌时不再直接失败；
+- 13、流程任务等，透传动态参数；
+- 14、任务自动注册；待考虑，因为任务自动注册将会导致任务难以管理控制；
+- 15、失败重试间隔；
+- 16、任务权限管理：执行器为粒度分配权限，核心操作校验权限；
+- 17、SimpleTrigger 支持；
+- 18、除Cron外，支持设置固定时间间隔触发；
+- 19、调度日志列表加上执行时长列，并支持排序；
+- 20、dag任务，替换子任务：配置并列的"a-b、b-c"路径列表，构成串行、并行、dag任务流程，"dagre-d3"绘图；任务依赖，流程图，子任务+会签任务，各节点日志；
+- 21、排程任务：支持时间短、时间点配置，支持配置多个，精确到秒；实现有效期等功能；
+- 22、告警邮件内容，支持自定义模板配置；
+- 23、暂停状态，支持Cron 为空；
+- 24、新增任务运行模式 "GLUE模式(GO) "，支持GO任务；
+- 25、注册中心优化，实时性注册发现：心跳注册间隔10s，refresh失败则首次注册并立即更新注册信息，心跳类似；30s过期销毁；
+- 26、提供执行器Docker镜像；
+- 27、脚本任务，支持数据参数，新版本仅支持单参数不支持需要兼容；
+- 28、GLUE 模式 Web Ide 版本对比功能；
+- 29、批量调度：调度请求入queue，调度线程批量获取调度请求并发起远程调度；提高线程效率；
+- 30、多语言执行器：约定跨语言通讯方案，以及通讯接口；
+- 31、移除commons-exec，采用原生实现；
 
 
 ## 七、其他

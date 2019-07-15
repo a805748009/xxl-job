@@ -11,8 +11,10 @@ $(function() {
 	        data : function ( d ) {
 	        	var obj = {};
 	        	obj.jobGroup = $('#jobGroup').val();
+                obj.triggerStatus = $('#triggerStatus').val();
                 obj.jobDesc = $('#jobDesc').val();
 	        	obj.executorHandler = $('#executorHandler').val();
+                obj.author = $('#author').val();
 	        	obj.start = d.start;
 	        	obj.length = d.length;
                 return obj;
@@ -31,7 +33,6 @@ $(function() {
 	                { 
 	                	"data": 'jobGroup', 
 	                	"visible" : false,
-						"width":'20%',
 	                	"render": function ( data, type, row ) {
 	            			var groupMenu = $("#jobGroup").find("option");
 	            			for ( var index in $("#jobGroup").find("option")) {
@@ -45,11 +46,11 @@ $(function() {
 	                {
 	                	"data": 'jobDesc',
 						"visible" : true,
-						"width":'20%'
+						"width":'25%'
 					},
 					{
 						"data": 'glueType',
-						"width":'20%',
+						"width":'25%',
 						"visible" : true,
 						"render": function ( data, type, row ) {
 							var glueTypeTitle = findGlueTypeTitle(row.glueType);
@@ -83,62 +84,63 @@ $(function() {
 	                { "data": 'author', "visible" : true, "width":'10%'},
 	                { "data": 'alarmEmail', "visible" : false},
 	                { 
-	                	"data": 'jobStatus',
+	                	"data": 'triggerStatus',
 						"width":'10%',
 	                	"visible" : true,
 	                	"render": function ( data, type, row ) {
-
                             // status
-	                		if (data && data != 'NONE') {
-                                if ('NORMAL' == data) {
-                                    return '<small class="label label-success" ><i class="fa fa-clock-o"></i>RUNNING</small>';
-                                } else {
-                                    return '<small class="label label-warning" >ERROR('+ data +')</small>';
-                                }
-							} else {
+                            if (1 == data) {
+                                return '<small class="label label-success" ><i class="fa fa-clock-o"></i>RUNNING</small>';
+                            } else {
                                 return '<small class="label label-default" ><i class="fa fa-clock-o"></i>STOP</small>';
-							}
-
+                            }
 	                		return data;
 	                	}
 	                },
 	                {
 						"data": I18n.system_opt ,
-						"width":'15%',
+						"width":'10%',
 	                	"render": function ( data, type, row ) {
 	                		return function(){
-	                			// status
-	                			var start_stop = "";
-                                if (row.jobStatus && row.jobStatus != 'NONE') {
-                                    if ('NORMAL' == row.jobStatus) {
-                                        start_stop = '<button class="btn btn-primary btn-xs job_operate" _type="job_pause" type="button">'+ I18n.jobinfo_opt_stop +'</button>  ';
-                                    } else {
-                                        start_stop = '<button class="btn btn-primary btn-xs job_operate" _type="job_pause" type="button">'+ I18n.jobinfo_opt_stop +'</button>  ';
-                                    }
+
+                                // status
+                                var start_stop_div = "";
+                                if (1 == row.triggerStatus ) {
+                                    start_stop_div = '<li><a href="javascript:void(0);" class="job_operate" _type="job_pause" >'+ I18n.jobinfo_opt_stop +'</a></li>\n';
                                 } else {
-                                    start_stop = '<button class="btn btn-primary btn-xs job_operate" _type="job_resume" type="button">'+ I18n.jobinfo_opt_start +'</button>  ';
+                                    start_stop_div = '<li><a href="javascript:void(0);" class="job_operate" _type="job_resume" >'+ I18n.jobinfo_opt_start +'</a></li>\n';
                                 }
 
-	                			// log url
-	                			var logUrl = base_url +'/joblog?jobId='+ row.id;
-	                			
-	                			// log url
-	                			var codeBtn = "";
-                                if ('BEAN' != row.glueType) {
-									var codeUrl = base_url +'/jobcode?jobId='+ row.id;
-									codeBtn = '<a href="'+ codeUrl +'" target="_blank" > <button class="btn btn-warning btn-xs" type="button" >GLUE</button> </a> '
-								}
+                                // log url
+                                var logHref = base_url +'/joblog?jobId='+ row.id;
 
-								// html
+                                // log url
+                                var codeBtn = "";
+                                if ('BEAN' != row.glueType) {
+                                    var codeUrl = base_url +'/jobcode?jobId='+ row.id;
+                                    codeBtn = '<li><a href="'+ codeUrl +'" target="_blank" >GLUE IDE</a></li>\n';
+                                }
+
+                                // data
                                 tableData['key'+row.id] = row;
-								var html = '<p id="'+ row.id +'" >'+
-									'<button class="btn btn-primary btn-xs job_trigger" type="button">'+ I18n.jobinfo_opt_run +'</button>  '+
-                                    start_stop +
-									'<a href="'+ logUrl +'"> <button class="btn btn-primary btn-xs" type="job_del" type="button" >'+ I18n.jobinfo_opt_log +'</button> </a> <br>  '+
-									'<button class="btn btn-warning btn-xs update" type="button">'+ I18n.system_opt_edit +'</button>  '+
-									codeBtn +
-									'<button class="btn btn-danger btn-xs job_operate" _type="job_del" type="button">'+ I18n.system_opt_del +'</button>  '+
-									'</p>';
+
+                                // opt
+                                var html = '<div class="btn-group">\n' +
+                                    '     <button type="button" class="btn btn-primary btn-sm">'+ I18n.system_opt +'</button>\n' +
+                                    '     <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">\n' +
+                                    '       <span class="caret"></span>\n' +
+                                    '       <span class="sr-only">Toggle Dropdown</span>\n' +
+                                    '     </button>\n' +
+                                    '     <ul class="dropdown-menu" role="menu" _id="'+ row.id +'" >\n' +
+                                    '       <li><a href="javascript:void(0);" class="job_trigger" >'+ I18n.jobinfo_opt_run +'</a></li>\n' +
+                                    start_stop_div +
+                                    '       <li><a href="'+ logHref +'">'+ I18n.jobinfo_opt_log +'</a></li>\n' +
+                                    '       <li class="divider"></li>\n' +
+                                    codeBtn +
+                                    '       <li><a href="javascript:void(0);" class="update" >'+ I18n.system_opt_edit +'</a></li>\n' +
+                                    '       <li><a href="javascript:void(0);" class="job_operate" _type="job_del" >'+ I18n.system_opt_del +'</a></li>\n' +
+                                    '     </ul>\n' +
+                                    '   </div>';
 
 	                			return html;
 							};
@@ -209,7 +211,7 @@ $(function() {
 			return;
 		}
 		
-		var id = $(this).parent('p').attr("id");
+		var id = $(this).parents('ul').attr("_id");
 
 		layer.confirm( I18n.system_ok + typeName + '?', {
 			icon: 3,
@@ -242,7 +244,7 @@ $(function() {
 
     // job trigger
     $("#job_list").on('click', '.job_trigger',function() {
-        var id = $(this).parent('p').attr("id");
+        var id = $(this).parents('ul').attr("_id");
         var row = tableData['key'+id];
 
         $("#jobTriggerModal .form input[name='id']").val( row.id );
@@ -276,6 +278,10 @@ $(function() {
 
 	// add
 	$(".add").click(function(){
+
+		// init
+        //$("#addModal .form input[name='jobCron']").cronGen({});
+
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
 	var addModalValidate = $("#addModal .form").validate({
@@ -412,7 +418,7 @@ $(function() {
 	// update
 	$("#job_list").on('click', '.update',function() {
 
-        var id = $(this).parent('p').attr("id");
+        var id = $(this).parents('ul').attr("_id");
         var row = tableData['key'+id];
 
 		// base data
@@ -432,6 +438,9 @@ $(function() {
 		$('#updateModal .form select[name=glueType] option[value='+ row.glueType +']').prop('selected', true);
 
         $("#updateModal .form select[name=glueType]").change();
+
+        // init
+        //$("#updateModal .form input[name='jobCron']").cronGen({});
 
 		// show
 		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
