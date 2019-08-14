@@ -4,7 +4,6 @@ import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.LogResult;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.biz.model.TriggerParam;
-import com.xxl.job.core.down.ShutDownHandler;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.glue.GlueFactory;
@@ -16,7 +15,6 @@ import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.thread.JobThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.Signal;
 
 import java.util.Date;
 
@@ -177,12 +175,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
 
     @Override
     public ReturnT<String> safeDestory() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                new ShutDownHandler().handle(new Signal("INT"));
-            }
-        }).start();
+        XxlJobExecutor.xxlJobExecutor.safeDestroy();
         return SUCCESS;
     }
 
